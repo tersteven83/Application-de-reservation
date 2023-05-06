@@ -2,70 +2,83 @@ from Model import Model
 
 
 class ClientModel(Model):
-    nom = None
-    prenom = None
-    cin = None
-    tel = None
-    sexe = None
-    inscrit = None
-    adresse = None
+    __id = None
+    __nom = None
+    __prenom = None
+    __cin = None
+    __tel = None
+    __sexe = None
+    __inscrit = None
+    __adresse = None
 
     def __init__(self):
         super().__init__()
-        self.table = 'client'
+        self._table = 'client'
 
-    def getNom(self):
-        return self.nom
+    @property
+    def id(self):
+        return self.__id
 
-    def setNom(self, nom):
-        self.nom = nom
-        return self
+    @id.setter
+    def id(self, id):
+        self.__id = id
 
-    def getPrenom(self):
-        return self.prenom
+    @property
+    def nom(self):
+        return self.__nom
 
-    def setPrenom(self, prenom):
-        self.prenom = prenom
-        return self
+    @nom.setter
+    def nom(self, nom):
+        self.__nom = nom
 
-    def getCin(self):
-        return self.cin
+    @property
+    def prenom(self):
+        return self.__prenom
 
-    def setCin(self, cin):
-        self.cin = cin
-        return self
+    @prenom.setter
+    def prenom(self, prenom):
+        self.__prenom = prenom
 
-    def getTel(self):
-        return self.tel
+    @property
+    def cin(self):
+        return self.__cin
 
-    def setTel(self, tel):
-        self.tel = tel
-        return self
+    @cin.setter
+    def cin(self, cin):
+        self.__cin = cin
 
-    def getSexe(self):
-        return self.sexe
+    @property
+    def tel(self):
+        return self.__tel
 
-    def setSexe(self, sexe):
-        self.sexe = sexe
-        return self
+    @tel.setter
+    def tel(self, tel):
+        self.__tel = tel
 
-    def getInscrit(self):
-        return self.inscrit
+    @property
+    def sexe(self):
+        return self.__sexe
 
-    def setInscrit(self, inscrit):
-        self.inscrit = inscrit
-        return self
+    @sexe.setter
+    def sexe(self, sexe):
+        self.__sexe = sexe
 
-    def getAdresse(self):
-        return self.adresse
+    @property
+    def inscrit(self):
+        return self.__inscrit
 
-    def setAdresse(self, adresse):
-        self.adresse = adresse
-        return self
+    @inscrit.setter
+    def inscrit(self, inscrit):
+        self.__inscrit = inscrit
+
+    @property
+    def adresse(self):
+        return self.__adresse
+
+    @adresse.setter
+    def adresse(self, adresse):
+        self.__adresse = adresse
 
 
 clientModel = ClientModel()
-print(clientModel.findBy({
-    "nom": "Blandine",
-    "sexe": "F"
-}))
+print(clientModel.findBy({"sexe":"F"}))

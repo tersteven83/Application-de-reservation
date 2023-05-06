@@ -12,21 +12,17 @@ class Db:
                                           port="5432",
                                           database="projet_python")
             # on met en place le curseur
-            self.curseur = connection.cursor()
+            # curseur peut etre accéder par les descendants de Db
+            self._curseur = connection.cursor()
         except(Exception, psycopg2.Error) as error:
             print(f"Failed to connect to database: {error}")
         finally:
             if connection:
                 connection.commit()
 
-
-    def getCurseur(self):
+    def _getCurseur(self):
         """
         cette fonction retourne le curseur après la connexion à la base de donnée
         :return: self
         """
-        return self.curseur
-
-
-
-
+        return self._curseur

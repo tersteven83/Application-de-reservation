@@ -2,9 +2,10 @@ from Core.Db import Db
 
 
 class Model(Db):
-    curseur = None
-    table = None
+    __curseur = None
+    _table = None
     id = None
+    setter = None
 
     def __init__(self):
         super().__init__()
@@ -16,20 +17,20 @@ class Model(Db):
         :param attributs:
         :return: doit être suivis par les fetch dans l'emploi
         """
-        self.curseur = self.getCurseur()
+        self.__curseur = self._getCurseur()
 
         if attributs is None:
-            self.curseur.execute(sql)
-            return self.curseur
+            self.__curseur.execute(sql)
+            return self.__curseur
         else:
-            self.curseur.execute(sql, attributs)
-            return self.curseur
+            self.__curseur.execute(sql, attributs)
+            return self.__curseur
 
     def findAll(self):
-        return self.requete(f"SELECT * FROM {self.table}").fetchall()
+        return self.requete(f"SELECT * FROM {self._table}").fetchall()
 
     def find(self, id):
-        return self.requete(f"SELECT * FROM {self.table} WHERE id={id}").fetchone()
+        return self.requete(f"SELECT * FROM {self._table} WHERE id={id}").fetchone()
 
     def findBy(self, criteres):
         # Critere doit etre en type dictionary
@@ -43,8 +44,7 @@ class Model(Db):
         # on doit merge la liste en string par le séparateur 'AND'
         cols = " AND ".join(liste_des_cols)
 
-        return self.requete(f"SELECT * FROM {self.table} WHERE {cols}", liste_des_vals).fetchall()
-
+        return self.requete(f"SELECT * FROM {self._table} WHERE {cols}", liste_des_vals).fetchall()
 
     def modifier(self, criteres):
         # UPDATE tabName SET col1=val1, col=val2 WHERE id=?
@@ -55,7 +55,7 @@ class Model(Db):
             liste_des_vals.append(value)
         cols = " ,".join(liste_des_cols)
 
-        return self.requete(f"UPDATE {self.table} SET {cols} WHERE id={self.id}", liste_des_vals)
+        return self.requete(f"UPDATE {self._table} SET {cols} WHERE id={self.id}", liste_des_vals)
 
     def create(self, criteres):
         # INSERT INTO tabName(col1,col2,...) VALUES(val1,val2,...)
@@ -69,12 +69,11 @@ class Model(Db):
             liste_format.append('%s')
         cols = ','.join(liste_des_cols)
         formatstring = ','.join(liste_format)
-        return self.requete(f"INSERT INTO {self.table}({cols}) VALUES({formatstring})", liste_des_vals)
+        return self.requete(f"INSERT INTO {self._table}({cols}) VALUES({formatstring})", liste_des_vals)
 
     def supprimer(self, id):
         # DELETE FROM tabName WHERE id=?
-        return self.requete(f"DELETE FROM {self.table} WHERE id={id}")
-
+        return self.requete(f"DELETE FROM {self._table} WHERE id={id}")
 
     def hydrate(self, criteres):
         """
