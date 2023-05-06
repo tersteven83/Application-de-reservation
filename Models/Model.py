@@ -2,6 +2,7 @@ from Core.Db import Db
 
 
 class Model(Db):
+    __connection = None
     __curseur = None
     _table = None
     id = None
@@ -10,21 +11,29 @@ class Model(Db):
     def __init__(self):
         super().__init__()
 
-    def requete(self, sql, attributs=None):
+    def requete(self, sql, attributs=None, commutation=False):
         """
         Faire une requête
+        :param commutation:
         :param sql: sql pur ou en format
         :param attributs:
         :return: doit être suivis par les fetch dans l'emploi
         """
-        self.__curseur = self._getCurseur()
+        # récupérer la connexion à la base de donnée
+        self.__connection = self._getConnection()
+        # on met le curseur sur la BD
+        self.__curseur = self.__connection.cursor()
 
         if attributs is None:
             self.__curseur.execute(sql)
-            return self.__curseur
         else:
             self.__curseur.execute(sql, attributs)
+
+        # s'il n'y a pas de commutation, on retourne le curseur
+        if not commutation:
             return self.__curseur
+        else:
+            self.__connection.commit()
 
     def findAll(self):
         return self.requete(f"SELECT * FROM {self._table}").fetchall()
@@ -55,7 +64,7 @@ class Model(Db):
             liste_des_vals.append(value)
         cols = " ,".join(liste_des_cols)
 
-        return self.requete(f"UPDATE {self._table} SET {cols} WHERE id={self.id}", liste_des_vals)
+        return self.requete(f"UPDATE {self._table} SET {cols} WHERE id={self.id}", liste_des_vals, True)
 
     def create(self, criteres):
         # INSERT INTO tabName(col1,col2,...) VALUES(val1,val2,...)
@@ -69,11 +78,11 @@ class Model(Db):
             liste_format.append('%s')
         cols = ','.join(liste_des_cols)
         formatstring = ','.join(liste_format)
-        return self.requete(f"INSERT INTO {self._table}({cols}) VALUES({formatstring})", liste_des_vals)
+        return self.requete(f"INSERT INTO {self._table}({cols}) VALUES({formatstring})", liste_des_vals, True)
 
     def supprimer(self, id):
         # DELETE FROM tabName WHERE id=?
-        return self.requete(f"DELETE FROM {self._table} WHERE id={id}")
+        return self.requete(f"DELETE FROM {self._table} WHERE id={id}", None, True)
 
     def hydrate(self, criteres):
         """

@@ -78,5 +78,3 @@ class VoyagerModel(Model):
     @lieudemb.setter
     def lieudemb(self, lieudemb):
         self.__lieudemb = lieudemb
-
-    

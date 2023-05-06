@@ -69,3 +69,16 @@ class CarModel(Model):
     @nb_voyage.setter
     def nb_voyage(self, nb_voyage):
         self.__nb_voyage = nb_voyage
+
+
+carModel = CarModel()
+# carModel.create({
+#     "marque": "Sprinter",
+#     "model": "412",
+#     "im": "2314TAB",
+#     "nom_chauff": "RABE",
+#     "nb_place": 12,
+#     "nb_voyage": 1
+# })
+
+print(carModel.findAll())
