@@ -16,9 +16,6 @@ class Db:
             # self._curseur = connection.cursor()
         except(Exception, psycopg2.Error) as error:
             print(f"Failed to connect to database: {error}")
-        # finally:
-        #     if connection:
-        #         connection.commit()
 
     def _getConnection(self):
         """

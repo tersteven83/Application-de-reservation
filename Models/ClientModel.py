@@ -1,4 +1,4 @@
-from Model import Model
+from Models.Model import Model
 
 
 class ClientModel(Model):
@@ -79,6 +79,3 @@ class ClientModel(Model):
     def adresse(self, adresse):
         self.__adresse = adresse
 
-
-clientModel = ClientModel()
-print(clientModel.findBy({"sexe":"F"}))

@@ -6,7 +6,7 @@ class Model(Db):
     __curseur = None
     _table = None
     id = None
-    setter = None
+    key = None
 
     def __init__(self):
         super().__init__()
@@ -66,7 +66,7 @@ class Model(Db):
 
         return self.requete(f"UPDATE {self._table} SET {cols} WHERE id={self.id}", liste_des_vals, True)
 
-    def create(self, criteres):
+    def create(self, criteres: dict) -> object:
         # INSERT INTO tabName(col1,col2,...) VALUES(val1,val2,...)
         # de la forme VALUES(%s, %s, %s,...) qui dépend du nombre de cols
         liste_des_cols = []
@@ -84,17 +84,13 @@ class Model(Db):
         # DELETE FROM tabName WHERE id=?
         return self.requete(f"DELETE FROM {self._table} WHERE id={id}", None, True)
 
-    def hydrate(self, criteres):
+    def hydrate(self, criteres: dict):
         """
         criteres est un dictionnaire key:value
-        on ajoute le mot 'set' devant key=>setKey
-        si setKey existe dans l'objet instancié, on affecte sa valeur pas value
-        sinon on ne fait rien
         :param criteres:
         :return:
         """
         for key, value in criteres.items():
-            setter = 'set' + key.capitalize()
-            if hasattr(self, setter) and callable(self.setter):
-                self.setter(value)
+            if hasattr(self, key) and callable(self.key):
+                self.key = value
         return self
