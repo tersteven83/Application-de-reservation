@@ -6,6 +6,7 @@ import re
 
 
 def reservation():
+    global im
     place = []
     # id des voyageurs
     id_client = []
@@ -20,24 +21,28 @@ def reservation():
     # date de reservation
     date_format = re.compile(r'^\d{2}/\d{2}/\d{4} \d{2}:\d{2}$')
     heure_format = re.compile(r'^\d{2}:\d{2}')
-    while not date_format.match(date_reserv):
+    while not date_format.match(date_reserv) and not heure_format.match(date_reserv):
         date_reserv = input("Date de voyage(dd/mm/yyyy hh:mm ou hh:mm(si aujourd'hui)): ")
 
     # on affiche les places disponibles
     if date_format.match(date_reserv):
-        id_car = Voyage.placedispo(dest_possible[dest], datetime.datetime.strptime(date_reserv, "%Y-%m-%d %H:%M"))
+        date_reserv = datetime.datetime.strptime(date_reserv, "%d/%m/%Y %H:%M")
+        id_car = Voyage.placedispo(dest_possible[dest], date_reserv)
     else:
-        id_car = Voyage.placedispo(dest_possible[dest], str(datetime.datetime.today()) + date_reserv)
+        # data d'aujourd'hui avec heure
+        date_reserv = str(datetime.date.today()) + " " + date_reserv
+        date_reserv = datetime.datetime.strptime(date_reserv, "%Y-%m-%d %H:%M")
+        id_car = Voyage.placedispo(dest_possible[dest], date_reserv)
 
     # raha vo mamerina none le methode etsy ambony de manonatany oe firy ny num anle fiara andehanana
     if id_car is None:
         trouver = False
         while not trouver:
             im = input("Entrez le numéro matricule du véhicule: ")
-            id_car = Car.trouverid(im)
             # si l'id de vehicule n'est pas None, on sort de la boucle
-            if id_car:
+            if Car.trouverid(im):
                 trouver = True
+        id_car = Car.trouverid(im)
 
     # récupérer le numéro téléphone du client
     # si le num existe déja... on affiche sa description
@@ -58,7 +63,7 @@ def reservation():
 
     # récuperer le numéro de la place
     for i in range(nb_place):
-        if i > 1:
+        if i > 0:
             id_client.append(Client.registre())
         place.append(int(input("Place numéro: ")))
 

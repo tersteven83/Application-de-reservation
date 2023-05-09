@@ -67,6 +67,11 @@ class Model(Db):
         return self.requete(f"UPDATE {self._table} SET {cols} WHERE id={self.id}", liste_des_vals, True)
 
     def create(self, criteres: dict) -> object:
+        """
+        Créer un champ dans la table
+        :param criteres:
+        :return:
+        """
         # INSERT INTO tabName(col1,col2,...) VALUES(val1,val2,...)
         # de la forme VALUES(%s, %s, %s,...) qui dépend du nombre de cols
         liste_des_cols = []

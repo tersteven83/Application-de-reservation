@@ -1,8 +1,10 @@
+from datetime import datetime
+
 from Models.VoyagerModel import VoyagerModel
 from Models.CarModel import CarModel
 
 
-def placedispo(destination, depart):
+def placedispo(destination, depart: datetime):
     """
     Cette fonction la liste des places disponibles dans un véhicule
     :param destination: lieu de destination
@@ -11,12 +13,12 @@ def placedispo(destination, depart):
     """
     voyage = VoyagerModel()
     liste_voyageur = voyage.findBy({
-        "dest": destination,
+        "destination": destination,
         "date_heure": str(depart)
     })
-    # refa None ny retour anle izy tode mivoaka
-    if liste_voyageur is None:
-        return
+    # rehefa vide le liste
+    if not liste_voyageur:
+        return None
     id_car = liste_voyageur[0][2]
 
     # on récupère le nombre de places d'une voiture
@@ -66,7 +68,7 @@ def registre(id_client, id_car, dest, date_reserv, place, nb_bagage):
         voyagermodel.create({
             "id_client": id_client[i],
             "id_car": id_car,
-            "dest": dest,
+            "destination": dest,
             "date_heure": date_reserv,
             "num_place": place[i],
             "nb_bagage": nb_bagage

@@ -9,4 +9,6 @@ def trouverid(im):
     """
     carmodel = CarModel()
     infocar = carmodel.findBy({"im": im})
+    if not infocar:
+        return False
     return infocar[0][0]
