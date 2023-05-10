@@ -2,7 +2,7 @@ from Core.Db import Db
 
 
 class Model(Db):
-    __connection = None
+    __connection = None  # private, double __
     __curseur = None
     _table = None
     id = None
@@ -16,7 +16,7 @@ class Model(Db):
         Faire une requête
         :param commutation:
         :param sql: sql pur ou en format
-        :param attributs:
+        :param attributs: liste des valeurs à insérer
         :return: doit être suivis par les fetch dans l'emploi
         """
         # récupérer la connexion à la base de donnée
@@ -27,6 +27,8 @@ class Model(Db):
         if attributs is None:
             self.__curseur.execute(sql)
         else:
+            # SELECT * FROM tabNamw WHERE col1=%s AND col2=%s;
+            # attributs miditra eto = ['val1', 'val2']
             self.__curseur.execute(sql, attributs)
 
         # s'il n'y a pas de commutation, on retourne le curseur
@@ -36,14 +38,24 @@ class Model(Db):
             self.__connection.commit()
 
     def findAll(self):
+        """
+        Récupérer le contenu de la table
+        :return:
+        """
         return self.requete(f"SELECT * FROM {self._table}").fetchall()
 
     def find(self, id):
+        """
+        Contenu de la table avec WHERE id
+        :param id:
+        :return:
+        """
         return self.requete(f"SELECT * FROM {self._table} WHERE id={id}").fetchone()
 
     def findBy(self, criteres):
         # Critere doit etre en type dictionary
         # SELECT * FROM tabName WHERE col1=val1 AND col2=val2 AND col3=val3
+        # SELECT * FROM tabName WHERE col1=%s AND col2=%s
         # on explode le dictionnaire d'abord
         liste_des_cols = []  # ce liste de col doit etre de la forme col1=%s AND col2=%s....
         liste_des_vals = []

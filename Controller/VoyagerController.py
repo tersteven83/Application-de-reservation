@@ -23,7 +23,7 @@ def placedispo(destination, depart: datetime):
 
     # on récupère le nombre de places d'une voiture
     carmodel = CarModel()
-    infocar = carmodel.find(id_car)
+    infocar = carmodel.find(id_car) # retourner liste
     nb_place = infocar[5]  # la colonne nb_place de la table 'car' se trouve à l'index 5
 
     # on liste les places disponibles
@@ -45,11 +45,11 @@ def placedispo(destination, depart: datetime):
 
     # on affiche les places libres
     # on convertit la liste de place libre en string
-    placelibre = ' ,'.join(placelibre)
-    print(placelibre)
+    affiche_placelibre = ' ,'.join(placelibre)
+    print(f"Les places libres sont: {affiche_placelibre}")
 
     # on retourne l'id_car
-    return id_car
+    return id_car, placelibre
 
 
 def registre(id_client, id_car, dest, date_reserv, place, nb_bagage):

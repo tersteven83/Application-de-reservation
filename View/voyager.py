@@ -6,12 +6,13 @@ import re
 
 
 def reservation():
-    global im
+    global im, num_place
     place = []
     # id des voyageurs
     id_client = []
     dest = ''
     date_reserv = ''
+    id_car = None
     # on récupère la destination et on l'envoi à place_dispo
     # les destinations possibles sont
     dest_possible = dict(f="Fianarantsoa", t="Tamatave", m="Majunga", mo="Moramanga")
@@ -27,12 +28,19 @@ def reservation():
     # on affiche les places disponibles
     if date_format.match(date_reserv):
         date_reserv = datetime.datetime.strptime(date_reserv, "%d/%m/%Y %H:%M")
-        id_car = Voyage.placedispo(dest_possible[dest], date_reserv)
+        # info dispo est un tuple qui contient deux valeurs, id_car et place_dispo
+        info_dispo = Voyage.placedispo(dest_possible[dest], date_reserv)
+
     else:
         # data d'aujourd'hui avec heure
         date_reserv = str(datetime.date.today()) + " " + date_reserv
         date_reserv = datetime.datetime.strptime(date_reserv, "%Y-%m-%d %H:%M")
-        id_car = Voyage.placedispo(dest_possible[dest], date_reserv)
+        info_dispo = Voyage.placedispo(dest_possible[dest], date_reserv)
+
+    # on récupère l'id_car dans l'index 0 de info_dispo
+    if info_dispo:
+        id_car = info_dispo[0]
+        place_dispo = info_dispo[1]
 
     # raha vo mamerina none le methode etsy ambony de manonatany oe firy ny num anle fiara andehanana
     if id_car is None:
@@ -65,7 +73,17 @@ def reservation():
     for i in range(nb_place):
         if i > 0:
             id_client.append(Client.registre())
-        place.append(int(input("Place numéro: ")))
+        # vérifié si la placee est déjà prise
+        # si oui on boucle, et on notif
+        verifie = False
+        while not verifie:
+            num_place = input("Place numéro: ")
+            if num_place in place_dispo:
+                break
+            else:
+                print("---Les places libres sont {}---".format(", ".join(place_dispo)))
+                print("Veuillez vérifier votre saisi.")
+        place.append(num_place)
 
     # ajouter le Voyage dans le cahier de registre
     Voyage.registre(id_client, id_car, dest_possible[dest], date_reserv, place, nb_bagage)
