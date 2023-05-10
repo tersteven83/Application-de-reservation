@@ -1,3 +1,8 @@
+import sys
+import main
+import View.voyager as voyage
+
+
 def validate(vardict: dict) -> bool:
     """
     Vérifier un variable s'il est vide ou non
@@ -14,6 +19,7 @@ def validate(vardict: dict) -> bool:
             # sinon la valeur de la clef n'est pas optionel
             else:
                 return False
+        value_controller(value)
 
     return True
 
@@ -30,4 +36,20 @@ def creer_dictionnaire(variables: list) -> dict:
         dictionary[variable] = ''
 
     return dictionary
+
+
+def value_controller(variable):
+    match variable:
+        case 'q':
+            sys.exit("Opération annulée.")
+        case '**':
+            main.main()
+        case '*1':
+            main.menu('1')
+        case '*2':
+            main.menu('2')
+        case '*3':
+            main.menu('3')
+        case _:
+            pass
 

@@ -12,11 +12,13 @@ def main():
     menu()
 
 
-def menu():
-    print("1. Réservation(s)")
-    print("2. Liste des passagers")
-    print("3. Places disponibles")
-    choix = input("Entrez votre choix ici: ")
+def menu(choix: str = None):
+    if choix is None:
+        print("1. Réservation(s)")
+        print("2. Liste des passagers")
+        print("3. Places disponibles")
+        print("NB: (q) pour quitter, (**) revenir au menu principal, (*1|*2|*3) revenir au choix précédent")
+        choix = input("Entrez votre choix ici: ")
 
     match choix:
         case '1':
