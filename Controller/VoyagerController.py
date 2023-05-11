@@ -97,7 +97,7 @@ def destination(possibilite: dict) -> str:
     return dest
 
 
-def date_reservation() -> datetime:
+def date_reservation(reservation=False) -> datetime:
     """
     Récupérer la date de réservation
     :return: date de réservation
@@ -117,6 +117,11 @@ def date_reservation() -> datetime:
         # data d'aujourd'hui avec heure
         date_reserv = "{0} {1}".format(str(datetime.date.today()), date_reserv)
         date_reserv = datetime.datetime.strptime(date_reserv, "%Y-%m-%d %H:%M")
+
+    # vérfier si la date de saisi est supérieure ou égale à la date d'aujourd'hui
+    if reservation and date_reserv < datetime.datetime.today():
+        print("Vérifier votre saisi")
+        date_reservation()
 
     return date_reserv
 

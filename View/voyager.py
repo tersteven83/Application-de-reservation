@@ -26,7 +26,7 @@ def reservation():
     dest = Voyage.destination(dest_possible)
 
     # date de reservation
-    date_reserv = Voyage.date_reservation()
+    date_reserv = Voyage.date_reservation(True)
 
     # on affiche les places disponibles
     # info dispo est un tuple qui contient deux valeurs, id_car et place_dispo
@@ -213,22 +213,38 @@ def place_disponible():
             f"Chauffeur: {info_car['chauff']}\t\t\tNuméro d'immatriculation: {info_car['im']} \t\t\t Marque: {info_car['marque']} {info_car['model']}"
             f"\t\t{info_car['nb_place']} places")
 
+        action = input(
+            "q:quitter;\t **:Revenir au menu principal;\t *1|*2|*3: Réservation|Liste des passagers|Places disponibles:  ")
+        Controller.value_controller(action)
+
 
 def dessiner_voiture(nb_place, place_dispo):
-    rang = 0
-    for i in range(1, nb_place + 1):
-        # si i n'est pas dans la place disponible on ajoute un " "
-        # sinon, on ajoute la place dans le dessin
-        rang += 1
-        if rang == 1:
-            sieges = [1, 2]
-            siege_dispo = verifier_siege(sieges, place_dispo)
-            print(" ----------------------")
-            print("|            {}   {}   | ".format(siege_dispo[0], siege_dispo[1]))
-        elif rang > 1:
-            sieges = [j for j in range(i+1, i+4)]
-            siege_dispo = verifier_siege(sieges, place_dispo)
-            print("|  {}   {}        {}   |".format(siege_dispo[0], siege_dispo[1], siege_dispo[2]))
+    table = PrettyTable()
+    # determiner le nombre de rangé du véhicule
+    nb_range = int(nb_place / 3)
+    j = 1
+    for i in range(1, nb_range):
+        # regler le pas de l'incrementation par rangé de j
+        if i == 1:
+            rang = [" ", " ", j, j + 1]
+            rang = verifier_siege(rang, place_dispo)
+            table.add_row(rang)
+            j += 2
+        if i == 1 or i == nb_range-1:
+            rang = [j for j in range(j, j + 4)]
+            rang = verifier_siege(rang, place_dispo)
+            table.add_row(rang)
+            j += 4
+        else:
+            rang = [j, j+1, " ", j+2]
+            rang = verifier_siege(rang, place_dispo)
+            table.add_row(rang)
+            j += 3
+
+    table.align = 'c'
+    table.border = True
+    table.header = False
+    print(table)
 
 
 def verifier_siege(sieges: list, place_dispo: list) -> list:
@@ -239,7 +255,8 @@ def verifier_siege(sieges: list, place_dispo: list) -> list:
     :return: liste des sieges libres
     """
     for i in range(len(sieges)):
-        if sieges[i] in place_dispo:
+        # si le siege est parmis les places disponibles, on continue, sinon on l'efface
+        if str(sieges[i]) in place_dispo:
             continue
         sieges[i] = ' '
 
