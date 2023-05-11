@@ -24,11 +24,9 @@ def menu(choix: str = None):
         case '1':
             voyager.reservation()
         case '2':
-            # liste_passager.start()
-            pass
+            voyager.liste_passager()
         case '3':
-            # place_dispo.start()
-            pass
+            voyager.place_disponible()
         case _:
             menu()
 

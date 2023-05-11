@@ -1,4 +1,5 @@
 from Models.CarModel import CarModel
+import Controller.Controller as Controller
 
 
 def trouverid(im):
@@ -12,3 +13,11 @@ def trouverid(im):
     if not infocar:
         return False
     return infocar[0][0]
+
+
+def info_car(identifier: int) -> dict:
+    carmodel = CarModel()
+    info = carmodel.find(identifier)
+    info = Controller.creer_dictionnaire(['id', 'marque', 'model', 'im', 'chauff', 'nb_place', 'nb_voyage'],
+                                         info)
+    return info

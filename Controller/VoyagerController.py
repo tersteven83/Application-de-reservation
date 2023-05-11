@@ -1,19 +1,21 @@
-from datetime import datetime
+import re
+import datetime
 
+import Controller.Controller as Controller
 from Models.VoyagerModel import VoyagerModel
 from Models.CarModel import CarModel
 
 
-def placedispo(destination, depart: datetime):
+def placedispo(dest, depart: datetime):
     """
     Cette fonction la liste des places disponibles dans un véhicule
-    :param destination: lieu de destination
+    :param dest: lieu de destination
     :param depart: date de départ
-    :return: id du véhicule dans la base de donnée
+    :return: id du véhicule dans la base de donnée et les places disponibles
     """
     voyage = VoyagerModel()
     liste_voyageur = voyage.findBy({
-        "destination": destination,
+        "destination": dest,
         "date_heure": str(depart)
     })
     # rehefa vide le liste
@@ -23,7 +25,7 @@ def placedispo(destination, depart: datetime):
 
     # on récupère le nombre de places d'une voiture
     carmodel = CarModel()
-    infocar = carmodel.find(id_car) # retourner liste
+    infocar = carmodel.find(id_car)  # retourner liste
     nb_place = infocar[5]  # la colonne nb_place de la table 'car' se trouve à l'index 5
 
     # on liste les places disponibles
@@ -46,7 +48,7 @@ def placedispo(destination, depart: datetime):
     # on affiche les places libres
     # on convertit la liste de place libre en string
     affiche_placelibre = ' ,'.join(placelibre)
-    print(f"Les places libres sont: {affiche_placelibre}")
+    print(f"Place(s) libre(s): {affiche_placelibre}")
 
     # on retourne l'id_car
     return id_car, placelibre
@@ -73,3 +75,89 @@ def registre(id_client, id_car, dest, date_reserv, place, nb_bagage):
             "num_place": place[i],
             "nb_bagage": nb_bagage
         })
+
+
+def destination(possibilite: dict) -> str:
+    """
+    Demande à l'utilisateur sa destination jusqu'à ce que son entrée au clavier soit dans le dictionnaire
+    :param possibilite: dictionnaire comme {"m": "Mahajanga", "t": "Toamasina"....}
+    :return:
+    """
+    dest = ''
+    choix_possible = []
+    for key, value in possibilite.items():
+        choix_possible.append("({}){}".format(key.upper(), value[len(key):]))
+    # on converti les choix possibles en chaines de caractères
+    choix_possible = ', '.join(choix_possible)
+
+    while dest not in possibilite:
+        dest = input("Destination: {}: ".format(choix_possible)).lower()
+        Controller.value_controller(dest)
+
+    return dest
+
+
+def date_reservation() -> datetime:
+    """
+    Récupérer la date de réservation
+    :return: date de réservation
+    """
+    date_reserv = ''
+    # format de la date
+    date_format = re.compile(r'^\d{2}/\d{2}/\d{4} \d{2}:\d{2}$')
+    heure_format = re.compile(r'^\d{2}:\d{2}')
+    while not date_format.match(date_reserv) and not heure_format.match(date_reserv):
+        date_reserv = input("Date de voyage(dd/mm/yyyy hh:mm ou hh:mm(si aujourd'hui)): ")
+        Controller.value_controller(date_reserv)
+
+    if date_format.match(date_reserv):
+        date_reserv = datetime.datetime.strptime(date_reserv, "%d/%m/%Y %H:%M")
+
+    else:
+        # data d'aujourd'hui avec heure
+        date_reserv = "{0} {1}".format(str(datetime.date.today()), date_reserv)
+        date_reserv = datetime.datetime.strptime(date_reserv, "%Y-%m-%d %H:%M")
+
+    return date_reserv
+
+
+def liste_passager(dest, depart: datetime) -> dict:
+    """
+    Récupérer la liste des passagers
+    :param dest: destination
+    :param depart: date de depart
+    :return:
+    """
+    voyageurs = {
+        "Place": [],
+        "Noms": [],
+        "CIN": [],
+        "Sexe": [],
+        "Destination": []
+    }
+    place = voyageurs['Place']
+    nom = voyageurs['Noms']
+    dests = voyageurs['Destination']
+    sexe = voyageurs['Sexe']
+    cin = voyageurs['CIN']
+    voyagermodel = VoyagerModel()
+    liste = voyagermodel.liste_passager(dest, depart)
+
+    for champ in liste:
+        place.append(champ[0])
+        nom.append(champ[1])
+        sexe.append(champ[2])
+        cin.append(champ[3])
+        dests.append(champ[4])
+
+    return voyageurs
+
+
+def supprimer_de_liste(criteres: dict):
+    """
+    supprimer une ligne de la liste des passagers
+    :param criteres:
+    :return:
+    """
+    voyagermodel = VoyagerModel()
+    voyagermodel.supprimer(criteres)

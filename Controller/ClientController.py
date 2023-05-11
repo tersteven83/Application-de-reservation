@@ -49,14 +49,15 @@ def registre():
     """
     # dictionnaire de variable
     # les contenus du dictionnaire qui a un nom avec '_opt' à la fin peut être null
-    info = Controller.creer_dictionnaire(['nom', 'prenom', 'cin_opt', 'tel_opt', 'sexe', 'adresse', 'inscrit'])
-    info['nom'] = input("\tNom: ")
-    info['prenom'] = input("\tPrénom: ")
-    info['cin_opt'] = input("\tNuméro CIN[optionnel]: ")
-    info['tel_opt'] = input("\tNuméro télephone[optionnel]: ")
-    info['sexe'] = input("\tsexe: ")
-    info['adresse'] = input("\tadresse: ")
-    info['inscrit'] = datetime.datetime.today()
+    nom = input("\tNom: ")
+    prenom = input("\tPrénom: ")
+    cin_opt = input("\tNuméro CIN[optionnel]: ")
+    tel_opt = input("\tNuméro télephone[optionnel]: ")
+    sexe = input("\tsexe: ")
+    adresse = input("\tadresse: ")
+    inscrit = datetime.datetime.today()
+    info = Controller.creer_dictionnaire(['nom', 'prenom', 'cin_opt', 'tel_opt', 'sexe', 'adresse', 'inscrit'],
+                                         [nom, prenom, cin_opt, tel_opt, sexe, adresse, inscrit])
     if not Controller.validate(info):
         print("----Veuillez bien remplir la formulaire----")
         registre()

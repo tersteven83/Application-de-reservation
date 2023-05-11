@@ -1,3 +1,5 @@
+import datetime
+
 from Models.Model import Model
 
 
@@ -78,3 +80,19 @@ class VoyagerModel(Model):
     @lieudemb.setter
     def lieudemb(self, lieudemb):
         self.__lieudemb = lieudemb
+
+    def liste_passager(self, dest, depart: datetime):
+        return self.requete(f"SELECT voyager.num_place AS Place, concat(nom, ' ', prenom) AS Noms, sexe, cin,  destination FROM client\
+        INNER JOIN {self._table} ON client.id=voyager.id_client \
+        WHERE date_heure='{depart}' AND destination='{dest}' ORDER BY Place").fetchall()
+
+    def supprimer(self, criteres: dict):
+        liste_des_cols = []  # ce liste de col doit etre de la forme col1=%s AND col2=%s....
+        liste_des_vals = []
+        for key, value in criteres.items():
+            liste_des_cols.append(key + '=%s')  # dans la boucle, c'est encore de la forme de liste
+            liste_des_vals.append(value)
+        # on doit merge la liste en string par le séparateur 'AND'
+        cols = " AND ".join(liste_des_cols)
+
+        return self.requete(f"DELETE FROM {self._table} WHERE {cols}", liste_des_vals, True)

@@ -1,4 +1,6 @@
 import sys
+from typing import Dict, Any
+
 import main
 import View.voyager as voyage
 
@@ -19,21 +21,31 @@ def validate(vardict: dict) -> bool:
             # sinon la valeur de la clef n'est pas optionel
             else:
                 return False
-        value_controller(value)
 
     return True
 
 
-def creer_dictionnaire(variables: list) -> dict:
+def creer_dictionnaire(nom_var: list, variables: list = None) -> bool | dict:
     """
     creer un dictionnaire de variables
-    :param variables: noms de variable
+    :param nom_var: étiquetes des variables
+    :param variables: valeurs des variables
     :return:
     """
+    if variables is None:
+        variables = []
+
+    # si la longueur des deux parametres ne sont pas égaux, on sort et retour faux
+    elif len(nom_var) != len(variables):
+        return False
+
     dictionary = {}
-    for variable in variables:
+
+    i: int
+    for i in range(len(nom_var)):
         # initialiser le contenu du mot pas un vide
-        dictionary[variable] = ''
+        # short hand if
+        dictionary[nom_var[i]] = variables[i] if variables[i] else ''
 
     return dictionary
 
@@ -52,4 +64,3 @@ def value_controller(variable):
             main.menu('3')
         case _:
             pass
-
