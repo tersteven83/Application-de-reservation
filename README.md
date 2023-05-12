@@ -1,7 +1,7 @@
 # Application-de-reservation
 Projet Python de L2
 
-Cette application est un application de réservation dévéloppée par RAZANAJATOVO Steven depuis le 08 Mai 2023.
+Cette application est une application de réservation dévéloppée par RAZANAJATOVO Steven depuis le 08 Mai 2023.
 
 Avant de l'executer dans votre IDE/editeur préféré, importer le fichier .sql dans votre sgbdr par la commande:
 > \i $PAth/vanilla-transport.sql
