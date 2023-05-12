@@ -4,7 +4,6 @@ import Controller.ClientController as Client
 import Controller.CarController as Car
 import Controller.Controller as Controller
 from prettytable import PrettyTable
-import re
 
 import main
 
@@ -26,7 +25,7 @@ def reservation():
     dest = Voyage.destination(dest_possible)
 
     # date de reservation
-    date_reserv = Voyage.date_reservation(True)
+    date_reserv = Voyage.date_reservation(reservation=True)
 
     # on affiche les places disponibles
     # info dispo est un tuple qui contient deux valeurs, id_car et place_dispo
@@ -43,11 +42,16 @@ def reservation():
         while not trouver:
             print(f"\t\tINITIATION DU VOYAGE du {date_reserv}")
             im = input("Entrez le numéro matricule du véhicule: ")
+
             Controller.value_controller(im)
             # si l'id de vehicule n'est pas None, on sort de la boucle
             if Car.trouverid(im):
-                trouver = True
-        id_car = Car.trouverid(im)
+                id_car = Car.trouverid(im)
+                # vérifier si l'im est déjà prise par d'autre voyage
+                if Voyage.est_prise(id_car, date_reserv):
+                    print(f"------La voiture {im} est déjà prise par d'autre voyage, veuillez chosir une autre-----")
+                else:
+                    trouver = True
 
     # récupérer le numéro téléphone du client
     # si le num existe déja... on affiche sa description
@@ -126,6 +130,7 @@ def liste_passager(formulaire=True, destnat=None, depart=None):
         date_reserv = depart
 
     voyageurs = Voyage.liste_passager(dest_possible[dest], date_reserv)
+    print("~~~~~~ Liste des passagers du {} ~~~~~~".format(date_reserv.strftime("%d/%m/%Y à %H:%M:%S")))
     draw_table(voyageurs)
 
     # info du véhicule
@@ -213,9 +218,12 @@ def place_disponible():
             f"Chauffeur: {info_car['chauff']}\t\t\tNuméro d'immatriculation: {info_car['im']} \t\t\t Marque: {info_car['marque']} {info_car['model']}"
             f"\t\t{info_car['nb_place']} places")
 
-        action = input(
-            "q:quitter;\t **:Revenir au menu principal;\t *1|*2|*3: Réservation|Liste des passagers|Places disponibles:  ")
-        Controller.value_controller(action)
+    else:
+        print("Le voyage du {} n'est pas initialisé.".format(date_reserv.strftime("%d/%m/%Y à %H:%M:%S")))
+
+    action = input(
+        "q:quitter;\t **:Revenir au menu principal;\t *1|*2|*3: Réservation|Liste des passagers|Places disponibles:  ")
+    Controller.value_controller(action)
 
 
 def dessiner_voiture(nb_place, place_dispo):
@@ -230,13 +238,13 @@ def dessiner_voiture(nb_place, place_dispo):
             rang = verifier_siege(rang, place_dispo)
             table.add_row(rang)
             j += 2
-        if i == 1 or i == nb_range-1:
+        if i == 1 or i == nb_range - 1:
             rang = [j for j in range(j, j + 4)]
             rang = verifier_siege(rang, place_dispo)
             table.add_row(rang)
             j += 4
         else:
-            rang = [j, j+1, " ", j+2]
+            rang = [j, j + 1, " ", j + 2]
             rang = verifier_siege(rang, place_dispo)
             table.add_row(rang)
             j += 3

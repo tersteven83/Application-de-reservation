@@ -120,7 +120,7 @@ def date_reservation(reservation=False) -> datetime:
 
     # vérfier si la date de saisi est supérieure ou égale à la date d'aujourd'hui
     if reservation and date_reserv < datetime.datetime.today():
-        print("Vérifier votre saisi")
+        print("La date est passée, vérifiez votre saisi")
         date_reservation()
 
     return date_reserv
@@ -166,3 +166,18 @@ def supprimer_de_liste(criteres: dict):
     """
     voyagermodel = VoyagerModel()
     voyagermodel.supprimer(criteres)
+
+
+def est_prise(id_car: int, depart: datetime) -> bool:
+    """
+    vérifier si le car est déjà pris dans un voyage
+    :param id_car:
+    :param depart: date de réservation
+    :return:
+    """
+    voyagermodel = VoyagerModel()
+    voyage = voyagermodel.findByDate(depart, id_car)
+    if len(voyage) != 0:
+        return True
+    else:
+        return False

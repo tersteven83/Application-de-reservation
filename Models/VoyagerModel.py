@@ -96,3 +96,17 @@ class VoyagerModel(Model):
         cols = " AND ".join(liste_des_cols)
 
         return self.requete(f"DELETE FROM {self._table} WHERE {cols}", liste_des_vals, True)
+
+    def findByDate(self, depart: datetime, identifier: int = None):
+        """
+        Trouver un voyage par date
+        :param identifier: id d'un véhicule
+        :param depart: date de réservation|départ
+        :return:
+        """
+        if type(depart) == datetime.datetime:
+            depart = depart.date()
+        if identifier is None:
+            return self.requete(f"SELECT * FROM {self._table} WHERE date_trunc('day', date_heure)='{depart}'").fetchall()
+        else:
+            return self.requete(f"SELECT * FROM {self._table} WHERE date_trunc('day', date_heure)='{depart}' AND id_car={identifier}").fetchall()
